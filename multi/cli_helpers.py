@@ -13,7 +13,9 @@ from multi.paths import Paths
 
 # `branch` is excluded because it reports branch state itself (including
 # mismatches); re-running the post-command check would duplicate the output.
-COMMANDS_WITHOUT_WORKSPACE_BRANCH_CHECK = {"branch", "doctor", "recent-users"}
+# `hooks` subcommands are branch-independent and run in partial install-set
+# workspaces, where the check would complain about repos that are not cloned.
+COMMANDS_WITHOUT_WORKSPACE_BRANCH_CHECK = {"branch", "doctor", "hooks", "recent-users"}
 
 
 def get_install_set_from_context() -> str | None:
@@ -69,7 +71,10 @@ def common_command_wrapper(command_to_wrap: click.Command) -> click.Command:
 
         # After commands, check that all sub-repos are on their expected branch.
         # Some commands (like doctor) intentionally run even when no workspace is initialized.
-        if command_to_wrap.name in COMMANDS_WITHOUT_WORKSPACE_BRANCH_CHECK:
+        command_names = {command_to_wrap.name}
+        if ctx is not None:
+            command_names.update(ctx.command_path.split()[1:])
+        if command_names & COMMANDS_WITHOUT_WORKSPACE_BRANCH_CHECK:
             return result
 
         try:

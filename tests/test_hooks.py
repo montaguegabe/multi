@@ -268,3 +268,18 @@ def test_hooks_cli_status_and_install(tmp_path, monkeypatch):
     result = runner.invoke(main, ["hooks", "install"])
     assert result.exit_code == 0, result.output
     assert runner.invoke(main, ["hooks", "status"]).exit_code == 0
+
+
+def test_hooks_status_skips_the_branch_check_for_uncloned_repos(tmp_path, monkeypatch):
+    root_path = _create_hooked_workspace(tmp_path, ["repo0"])
+    config = json.loads((root_path / "multi.json").read_text())
+    config["repos"].append(
+        {"url": "https://example.invalid/never-cloned", "name": "absent"}
+    )
+    (root_path / "multi.json").write_text(json.dumps(config))
+    monkeypatch.chdir(root_path)
+
+    result = CliRunner().invoke(main, ["hooks", "status"])
+
+    assert result.exit_code == 0, result.output
+    assert "Could not determine current branch" not in result.output
