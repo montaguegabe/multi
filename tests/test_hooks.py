@@ -82,7 +82,16 @@ def _commit_refused(repo_path: Path) -> bool:
     (repo_path / "change.txt").write_text("change\n")
     subprocess.run(["git", "add", "change.txt"], cwd=repo_path, check=True)
     result = subprocess.run(
-        ["git", "commit", "-m", "change"],
+        [
+            "git",
+            "-c",
+            "user.name=Multi Test",
+            "-c",
+            "user.email=multi-test@example.invalid",
+            "commit",
+            "-m",
+            "change",
+        ],
         cwd=repo_path,
         capture_output=True,
         text=True,
