@@ -29,7 +29,7 @@ If `--branch` is omitted, `NAME` is used as the branch name.
 ## Behavior
 
 1. Creates a root worktree on the target branch inside the `<workspace-dirname>-worktrees` sibling directory, creating that directory if needed.
-2. Runs `multi sync` in the new worktree to populate sub-repos and generated config.
+2. Runs `multi sync` in the new worktree to populate sub-repos and generated config, which also installs the workspace hooks (see [`hooks`](hooks.md)) so every repo in the worktree runs them.
 3. Checks sub-repos out to the target branch, except repos with `fixedBranch`.
 4. Symlinks or copies configured gitignored paths from the original workspace.
 

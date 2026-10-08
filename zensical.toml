@@ -21,6 +21,7 @@ nav = [
     { "branch" = "commands/branch.md" },
     { "set-branch" = "commands/set-branch.md" },
     { "git" = "commands/git.md" },
+    { "hooks" = "commands/hooks.md" },
     { "doctor" = "commands/doctor.md" }
   ]},
   { "Configuration" = "configuration.md" },

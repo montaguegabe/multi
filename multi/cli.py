@@ -9,6 +9,12 @@ from multi.convert_monorepo import convert_monorepo_cmd
 from multi.doctor import doctor_cmd
 from multi.git_run import git_cmd
 from multi.git_set_branch import set_branch_cmd
+from multi.hooks import (
+    hooks_cmd,
+    hooks_install_cmd,
+    hooks_status_cmd,
+    hooks_uninstall_cmd,
+)
 from multi.init import init_cmd
 from multi.open import open_cmd
 from multi.remove import remove_cmd
@@ -56,6 +62,10 @@ main.add_command(common_command_wrapper(doctor_cmd))
 main.add_command(common_command_wrapper(convert_monorepo_cmd))
 main.add_command(common_command_wrapper(remove_cmd))
 main.add_command(worktree_cmd)
+hooks_cmd.add_command(common_command_wrapper(hooks_install_cmd))
+hooks_cmd.add_command(common_command_wrapper(hooks_status_cmd))
+hooks_cmd.add_command(common_command_wrapper(hooks_uninstall_cmd))
+main.add_command(hooks_cmd)
 main.add_command(open_cmd)
 main.add_command(service_cmd)
 

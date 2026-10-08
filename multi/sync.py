@@ -12,6 +12,7 @@ from multi.bootstrap import ensure_root_git_repo, ensure_workspace_readme
 from multi.cli_helpers import common_command_wrapper
 from multi.doctor import find_nested_git_repos_in_monorepo
 from multi.git_helpers import expected_branch_for_repo, get_current_branch
+from multi.hooks import install_hooks
 from multi.ignore_files import (
     update_gitignore_with_generated_files,
     update_gitignore_with_repos,
@@ -214,6 +215,7 @@ def sync(
     if not paths.settings.is_monorepo():
         clone_repos(paths=paths, ensure_on_same_branch=ensure_on_same_branch)
 
+    install_hooks(paths=paths)
     update_gitignore_with_generated_files(paths=paths)
     merge_vscode_configs(root_dir=root_dir, install_set=install_set)
     sync_all_agents(root_dir=root_dir, install_set=install_set)

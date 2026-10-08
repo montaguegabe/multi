@@ -23,9 +23,10 @@ A full sync performs all of the following:
 1. Initializes root git repository if missing
 2. Creates `README.md` if missing
 3. Clones any missing repositories (standard mode only)
-4. Merges VS Code configurations (settings, launch, tasks, extensions)
-5. Generates agent instruction files when `agentInstructions.enabled` is true
-6. Syncs GitHub Actions workflows to root `.github/workflows` (monorepo mode only)
+4. Installs workspace git hooks in the root and every sub-repo when `hooks.path` is configured (see [`hooks`](hooks.md))
+5. Merges VS Code configurations (settings, launch, tasks, extensions)
+6. Generates agent instruction files when `agentInstructions.enabled` is true
+7. Syncs GitHub Actions workflows to root `.github/workflows` (monorepo mode only)
 
 Fresh clone and symlink setup uses Multi's shared expected-branch invariant from `multi.git_helpers.expected_branch_for_repo`: repos with `fixedBranch` are checked out to that branch, and unlocked repos mirror the root workspace branch when branch mirroring is enabled.
 

@@ -15,6 +15,7 @@ Multi provides commands for managing your multi-repo workspace.
 | [`set-branch`](set-branch.md) | Switch repos to their expected branches |
 | [`worktree add`](worktree.md) | Create a git worktree in the sibling `<workspace>-worktrees` directory |
 | [`git`](git.md) | Run git commands across all repos |
+| [`hooks`](hooks.md) | Install and check workspace-level git hooks in every repo |
 | [`doctor`](doctor.md) | Diagnose common workspace configuration issues |
 
 ## Global Options

@@ -331,6 +331,20 @@ Multi's branch invariant is centralized in `multi.git_helpers.expected_branch_fo
 
 ---
 
+### hooks
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `hooks.path` | string | - | Workspace-relative directory of git hook scripts that every repo in the workspace runs |
+
+When set, `multi sync`, `multi init` and `multi worktree add` point `core.hooksPath` of the root repo and every sub-repo at this directory. Check it with `multi hooks status`. See [`hooks`](commands/hooks.md).
+
+```json
+{
+  "hooks": { "path": ".githooks" }
+}
+```
+
 ### worktree
 
 Configuration for `multi worktree add`.
