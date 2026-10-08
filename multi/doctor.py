@@ -10,6 +10,7 @@ import git as gitmodule
 
 from multi.errors import NoRepositoriesError
 from multi.git_helpers import is_git_repo_root
+from multi.hooks import PROBLEM_STATES, configured_hooks_path, hooks_status
 from multi.paths import Paths
 from multi.repos import Repository, load_repos
 
@@ -258,6 +259,33 @@ def warn_on_repo_disk_mismatches(
         )
 
 
+def warn_on_uninstalled_hooks(report: DoctorReport, paths: Paths) -> None:
+    try:
+        if configured_hooks_path(paths) is None:
+            return
+    except ValueError as exc:
+        report.errors.append(str(exc))
+        return
+
+    status = hooks_status(paths)
+    if not status.hooks_dir_exists:
+        report.warnings.append(
+            f"Workspace hooks directory {status.hooks_dir} does not exist; "
+            "git runs no hooks."
+        )
+    if status.non_executable:
+        report.warnings.append(
+            "Workspace hooks are not executable (git skips them): "
+            f"{', '.join(status.non_executable)}. Run `chmod +x` on them."
+        )
+    uninstalled = [repo.path for repo in status.repos if repo.state in PROBLEM_STATES]
+    if uninstalled:
+        report.warnings.append(
+            "Workspace hooks are not installed in: "
+            f"{', '.join(uninstalled)}. Run `multi hooks install`."
+        )
+
+
 def run_doctor_checks(target_dir: Path) -> DoctorReport:
     report = DoctorReport()
 
@@ -292,6 +320,7 @@ def run_doctor_checks(target_dir: Path) -> DoctorReport:
     warn_on_tracked_subrepos(report, paths, repos)
     warn_on_subrepo_submodules(report, paths, repos)
     warn_on_repo_disk_mismatches(report, paths, repos)
+    warn_on_uninstalled_hooks(report, paths)
 
     return report
 
