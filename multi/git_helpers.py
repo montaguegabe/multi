@@ -86,14 +86,18 @@ def describe_head(repo_path: Path) -> str:
 def check_all_on_same_branch(paths: Paths, raise_error: bool = True) -> bool:
     """Validate that all repositories are on the expected branch.
 
-    Read-only: does not require clean working trees. Detached HEADs are
+    Read-only: does not require clean working trees. Repos that were never
+    cloned into this workspace are skipped. Detached HEADs are
     reported as ``(detached at <short-sha>)`` and never match an expected
     branch name.
     """
-    from multi.repos import load_repos
+    from multi.repos import load_cloned_repos
 
     root_branch = describe_head(paths.root_dir)
-    repo_branches = [(repo, describe_head(repo.path)) for repo in load_repos(paths)]
+    # Uncloned repos (outside this checkout's install set) have no branch.
+    repo_branches = [
+        (repo, describe_head(repo.path)) for repo in load_cloned_repos(paths)
+    ]
     for repo, branch in repo_branches:
         expected_branch = expected_branch_for_repo(repo, root_branch)
         if branch != expected_branch:

@@ -1,5 +1,9 @@
-import pytest
+import json
 
+import pytest
+from click.testing import CliRunner
+
+from multi.cli import main
 from multi.errors import GitError
 from multi.git_helpers import (
     check_all_on_same_branch,
@@ -100,3 +104,39 @@ def test_get_current_branch_gives_actionable_message(tmp_path):
     # `git init` advice (that would create an unrelated empty repo).
     assert str(tmp_path) not in message
     assert "git init" not in message
+
+
+def _add_repo_to_multi_json(root_repo, name):
+    multi_json = root_repo / "multi.json"
+    config = json.loads(multi_json.read_text())
+    config["repos"].append({"url": f"https://example.invalid/{name}", "name": name})
+    multi_json.write_text(json.dumps(config))
+
+
+def test_multi_git_skips_repos_not_cloned_in_this_workspace(
+    setup_git_repos, monkeypatch
+):
+    """A partial install set (public checkout) must not abort `multi git`."""
+    root_repo, _ = setup_git_repos
+    _add_repo_to_multi_json(root_repo, "internal-only")
+    (root_repo / "empty-leftover").mkdir()
+    _add_repo_to_multi_json(root_repo, "empty-leftover")
+    monkeypatch.chdir(root_repo)
+
+    assert check_all_on_same_branch(Paths(root_repo)) is True
+    result = CliRunner().invoke(main, ["git", "status", "--short"])
+
+    assert result.exit_code == 0, result.output
+    assert "Could not determine current branch" not in result.output
+
+
+def test_multi_git_still_fails_on_a_damaged_checkout(setup_git_repos):
+    """A non-empty directory without git metadata is not silently skipped."""
+    root_repo, _ = setup_git_repos
+    damaged = root_repo / "damaged"
+    damaged.mkdir()
+    (damaged / "README.md").write_text("files but no .git")
+    _add_repo_to_multi_json(root_repo, "damaged")
+
+    with pytest.raises(GitError, match="Could not determine current branch"):
+        check_all_on_same_branch(Paths(root_repo))

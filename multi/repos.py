@@ -109,6 +109,19 @@ class Repository:
         ]
         return any((self.path / file).exists() for file in python_files)
 
+    @property
+    def is_cloned(self) -> bool:
+        """False only when the repo was never cloned into this workspace.
+
+        A partial install set (for example a public checkout of a workspace
+        whose multi.json also lists internal repos) leaves those paths absent.
+        A non-empty directory without git metadata still counts as present, so
+        a damaged checkout keeps failing loudly instead of being skipped.
+        """
+        if (self.path / ".git").exists():
+            return True
+        return self.path.is_dir() and any(self.path.iterdir())
+
     def matches_install_set(self, install_set: str | None) -> bool:
         if install_set is None:
             return True
@@ -164,3 +177,8 @@ def load_repos(paths: Paths) -> List[Repository]:
         raise NoRepositoriesError("No repositories found in multi.json settings.")
 
     return result
+
+
+def load_cloned_repos(paths: Paths) -> List[Repository]:
+    """Like load_repos, minus repos that are not cloned in this workspace."""
+    return [repo for repo in load_repos(paths) if repo.is_cloned]

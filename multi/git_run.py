@@ -41,8 +41,12 @@ def run_git_in_all_repos(paths: Paths, git_args: List[str]) -> None:
     # Run in root repo first
     run_git_command(paths.root_dir, git_args)
 
-    # Then run in all sub-repos
+    # Then run in all sub-repos that are cloned here. A partial install set
+    # (e.g. a public checkout) leaves internal-only repos absent.
     for repo in load_repos(paths):
+        if not repo.is_cloned:
+            logger.info(f"Skipping {repo.name}: not cloned in this workspace")
+            continue
         run_git_command(repo.path, git_args)
 
 
@@ -57,8 +61,8 @@ def git_cmd(git_args: tuple[str, ...]) -> None:
              multi git checkout -b feature/new-branch
              multi git branch --show-current
 
-    Requires all repositories to be on their expected branch (working trees may
-    be dirty). To inspect branches when they mismatch, use `multi branch`.
+    Requires all cloned repositories to be on their expected branch (working
+    trees may be dirty). Repos not cloned in this workspace are skipped. To inspect branches when they mismatch, use `multi branch`.
     """
     paths = Paths(Path.cwd())
     if paths.settings.is_monorepo():
