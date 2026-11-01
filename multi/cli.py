@@ -19,6 +19,7 @@ from multi.init import init_cmd
 from multi.open import open_cmd
 from multi.remove import remove_cmd
 from multi.service import service_cmd
+from multi.skills import skills_cmd, skills_install_cmd
 from multi.sync import sync_cmd
 from multi.worktree import worktree_cmd
 
@@ -68,6 +69,8 @@ hooks_cmd.add_command(common_command_wrapper(hooks_uninstall_cmd))
 main.add_command(hooks_cmd)
 main.add_command(open_cmd)
 main.add_command(service_cmd)
+skills_cmd.add_command(common_command_wrapper(skills_install_cmd))
+main.add_command(skills_cmd)
 
 if __name__ == "__main__":
     main()

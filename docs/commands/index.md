@@ -16,6 +16,7 @@ Multi provides commands for managing your multi-repo workspace.
 | [`worktree add`](worktree.md) | Create a git worktree in the sibling `<workspace>-worktrees` directory |
 | [`git`](git.md) | Run git commands across all repos |
 | [`hooks`](hooks.md) | Install and check workspace-level git hooks in every repo |
+| [`skills install`](skills.md) | Install the Multi agent skills (copy via `npx skills add`, or `--dev` to symlink a local checkout) |
 | [`doctor`](doctor.md) | Diagnose common workspace configuration issues |
 
 ## Global Options

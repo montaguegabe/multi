@@ -6,7 +6,14 @@ The skill teaches agents how to work with Multi-managed workspaces, including `m
 
 ## Installation
 
-Install the Multi skill from the standalone repo:
+The CLI can install the skill for you:
+
+```bash
+multi skills install          # copy the published skill (npx skills add)
+multi skills install --dev    # symlink a local multi-skills checkout for development
+```
+
+See [skills](commands/skills.md). Or install the Multi skill directly from the standalone repo:
 
 ```bash
 # Optional: preview available skills
