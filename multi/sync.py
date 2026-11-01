@@ -22,6 +22,7 @@ from multi.paths import Paths
 from multi.registry import lookup_repo, register_repo
 from multi.repos import Repository, load_repos
 from multi.sync_agents import sync_agents_cmd, sync_all_agents
+from multi.sync_codex import sync_all_codex, sync_codex_cmd
 from multi.sync_github import sync_all_github_actions, sync_github_cmd
 from multi.sync_skills import sync_all_skills, sync_skills_cmd
 from multi.sync_vscode import merge_vscode_configs, vscode_cmd
@@ -220,6 +221,7 @@ def sync(
     update_gitignore_with_generated_files(paths=paths)
     merge_vscode_configs(root_dir=root_dir, install_set=install_set)
     sync_all_agents(root_dir=root_dir, install_set=install_set)
+    sync_all_codex(root_dir=root_dir, install_set=install_set)
     sync_all_github_actions(root_dir=root_dir, install_set=install_set)
     sync_all_skills(root_dir=root_dir, install_set=install_set)
 
@@ -251,5 +253,6 @@ def sync_cmd(ctx: click.Context, install_set: str | None):
 # Add subcommands
 sync_cmd.add_command(common_command_wrapper(vscode_cmd))
 sync_cmd.add_command(common_command_wrapper(sync_agents_cmd))
+sync_cmd.add_command(common_command_wrapper(sync_codex_cmd))
 sync_cmd.add_command(common_command_wrapper(sync_github_cmd))
 sync_cmd.add_command(common_command_wrapper(sync_skills_cmd))

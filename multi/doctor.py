@@ -13,6 +13,7 @@ from multi.git_helpers import is_git_repo_root
 from multi.hooks import PROBLEM_STATES, configured_hooks_path, hooks_status
 from multi.paths import Paths
 from multi.repos import Repository, load_repos
+from multi.sync_codex import codex_override_problem
 
 logger = logging.getLogger(__name__)
 
@@ -286,6 +287,12 @@ def warn_on_uninstalled_hooks(report: DoctorReport, paths: Paths) -> None:
         )
 
 
+def warn_on_codex_override_problems(report: DoctorReport, paths: Paths) -> None:
+    problem = codex_override_problem(paths)
+    if problem:
+        report.warnings.append(problem)
+
+
 def run_doctor_checks(target_dir: Path) -> DoctorReport:
     report = DoctorReport()
 
@@ -320,6 +327,7 @@ def run_doctor_checks(target_dir: Path) -> DoctorReport:
     warn_on_tracked_subrepos(report, paths, repos)
     warn_on_subrepo_submodules(report, paths, repos)
     warn_on_repo_disk_mismatches(report, paths, repos)
+    warn_on_codex_override_problems(report, paths)
     warn_on_uninstalled_hooks(report, paths)
 
     return report

@@ -10,6 +10,7 @@ from multi.managed_blocks import (
 from multi.paths import Paths
 from multi.repos import load_repos
 from multi.sync_agents import would_generate_agents_for_repo
+from multi.sync_codex import OVERRIDE_FILENAME, would_generate_codex_override
 from multi.sync_skills import root_skill_link_entries
 
 REPO_DIRECTORIES_BLOCK = ManagedBlock("repo-directories")
@@ -157,6 +158,8 @@ def update_gitignore_with_generated_files(paths: Paths):
     ]
     if would_generate_agents_for_repo(paths.root_dir, paths, is_root=True):
         root_generated_entries.extend(["CLAUDE.md", "AGENTS.md"])
+    if would_generate_codex_override(paths):
+        root_generated_entries.append(OVERRIDE_FILENAME)
     root_generated_entries.extend(root_skill_link_entries(paths))
     IgnoreFile(paths.gitignore_path, GENERATED_FILES_BLOCK).set_managed_lines(
         _with_generated_files_header(root_generated_entries)
