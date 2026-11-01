@@ -10,6 +10,7 @@ Features:
 - Supports optional `installSets` so installer scripts can sync only a public/runtime subset of repos.
 - Optionally generates `CLAUDE.md` and `AGENTS.md` files from tracked `AGENTS.parts/*.md` files.
 - In monorepo mode, syncs sub-repo GitHub workflows into root `.github/workflows`.
+- Links sub-repo `.agents/skills` into the root `.agents/skills` so Codex, which only searches upward from the working directory, discovers them from the workspace. Claude Code already finds nested `.claude/skills` on its own, so those are left in place. Disable with `"skills": {"enabled": false}` in `multi.json`.
 - Pairs with Multi Desktop for workspace diffs, branch visibility, and actionable push diagnostics.
 
 ## Installation
